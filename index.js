@@ -69,19 +69,19 @@ const bodyPartInfo = {
 
 // Position mapping for card placement
 const positionOffsets = {
-    'head': { x: -150, y: -200 },
-    'left-shoulder': { x: -200, y: -50 },
-    'right-shoulder': { x: 100, y: -50 },
-    'left-arm': { x: -250, y: 50 },
-    'right-arm': { x: 200, y: 50 },
-    'chest': { x: -150, y: -100 },
-    'stomach': { x: -150, y: 50 },
-    'left-leg': { x: -200, y: 200 },
-    'right-leg': { x: 150, y: 200 },
-    'left-hand': { x: -300, y: 100 },
-    'right-hand': { x: 300, y: 100 },
-    'left-foot': { x: -200, y: 400 },
-    'right-foot': { x: 150, y: 400 }
+    'head': { x: -150, y: -100 },
+    'left-shoulder': { x: -200, y: -30 },
+    'right-shoulder': { x: 100, y: -30 },
+    'left-arm': { x: -250, y: 30 },
+    'right-arm': { x: 200, y: 30 },
+    'chest': { x: -150, y: -60 },
+    'stomach': { x: -150, y: 30 },
+    'left-leg': { x: -200, y: 150 },
+    'right-leg': { x: 150, y: 150 },
+    'left-hand': { x: -300, y: 80 },
+    'right-hand': { x: 300, y: 80 },
+    'left-foot': { x: -250, y: 100 },
+    'right-foot': { x: 150, y: 100 }
 };
 
 window.onload = function () {
