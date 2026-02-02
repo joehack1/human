@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Human Anatomy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .content {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        .svg-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 600px;
+        }
+
+        svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .info-panel {
+            flex: 0 0 300px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            min-height: 600px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-panel h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .info-panel p {
+            color: #555;
+            line-height: 1.8;
+            font-size: 0.95em;
+        }
+
+        .body-part {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .body-part:hover {
+            opacity: 0.8;
+            filter: brightness(1.2);
+        }
+
+        .default-message {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+
+            .info-panel {
+                flex: 1;
+                width: 100%;
+                min-height: auto;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive Human Anatomy</h1>
+        <p class="subtitle">Hover over any body part to learn more</p>
+        
+        <div class="content">
+            <div class="svg-container">
+                <svg width="400" height="700" viewBox="0 0 400 700" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Head -->
+                    <ellipse class="body-part" data-part="head" cx="200" cy="80" rx="60" ry="70" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Hair -->
+                    <path class="body-part" data-part="hair" d="M 140 60 Q 140 20 170 15 Q 200 10 230 15 Q 260 20 260 60 Q 260 50 250 45 Q 240 40 230 42 Q 220 30 210 28 Q 200 27 190 28 Q 180 30 170 42 Q 160 40 150 45 Q 140 50 140 60 Z" fill="#3d2817" stroke="#2a1a0f" stroke-width="2"/>
+                    
+                    <!-- Left Ear -->
+                    <ellipse class="body-part" data-part="left-ear" cx="140" cy="80" rx="12" ry="20" fill="#ffc896" stroke="#333" stroke-width="1.5"/>
+                    <ellipse cx="140" cy="80" rx="6" ry="10" fill="#ffb87a" stroke="none"/>
+                    
+                    <!-- Right Ear -->
+                    <ellipse class="body-part" data-part="right-ear" cx="260" cy="80" rx="12" ry="20" fill="#ffc896" stroke="#333" stroke-width="1.5"/>
+                    <ellipse cx="260" cy="80" rx="6" ry="10" fill="#ffb87a" stroke="none"/>
+                    
+                    <!-- Eyes -->
+                    <ellipse class="body-part" data-part="left-eye" cx="180" cy="75" rx="10" ry="8" fill="white" stroke="#333" stroke-width="1.5"/>
+                    <circle cx="182" cy="75" r="5" fill="#4a90e2"/>
+                    <circle cx="183" cy="73" r="2" fill="black"/>
+                    
+                    <ellipse class="body-part" data-part="right-eye" cx="220" cy="75" rx="10" ry="8" fill="white" stroke="#333" stroke-width="1.5"/>
+                    <circle cx="218" cy="75" r="5" fill="#4a90e2"/>
+                    <circle cx="217" cy="73" r="2" fill="black"/>
+                    
+                    <!-- Nose -->
+                    <path class="body-part" data-part="nose" d="M 200 85 L 195 95 Q 200 98 205 95 Z" fill="#ffb87a" stroke="#333" stroke-width="1.5"/>
+                    
+                    <!-- Mouth -->
+                    <path class="body-part" data-part="mouth" d="M 185 105 Q 200 110 215 105" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                    
+                    <!-- Neck -->
+                    <rect class="body-part" data-part="neck" x="185" y="145" width="30" height="35" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Torso -->
+                    <path class="body-part" data-part="chest" d="M 160 180 L 130 200 L 130 300 L 200 300 L 200 180 Z" fill="#ff6b6b" stroke="#333" stroke-width="2"/>
+                    <path class="body-part" data-part="chest" d="M 240 180 L 270 200 L 270 300 L 200 300 L 200 180 Z" fill="#ff6b6b" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Abdomen -->
+                    <rect class="body-part" data-part="abdomen" x="130" y="300" width="140" height="100" fill="#ff8787" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Left Shoulder -->
+                    <circle class="body-part" data-part="left-shoulder" cx="130" cy="190" r="25" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Right Shoulder -->
+                    <circle class="body-part" data-part="right-shoulder" cx="270" cy="190" r="25" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Left Upper Arm -->
+                    <rect class="body-part" data-part="left-upper-arm" x="100" y="210" width="30" height="90" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Right Upper Arm -->
+                    <rect class="body-part" data-part="right-upper-arm" x="270" y="210" width="30" height="90" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Left Elbow -->
+                    <circle class="body-part" data-part="left-elbow" cx="115" cy="305" r="15" fill="#ffc896" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Right Elbow -->
+                    <circle class="body-part" data-part="right-elbow" cx="285" cy="305" r="15" fill="#ffc896" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Left Forearm -->
+                    <rect class="body-part" data-part="left-forearm" x="100" y="315" width="30" height="85" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Right Forearm -->
+                    <rect class="body-part" data-part="right-forearm" x="270" y="315" width="30" height="85" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Left Wrist -->
+                    <rect class="body-part" data-part="left-wrist" x="105" y="400" width="20" height="15" fill="#ffc896" stroke="#333" stroke-width="1.5"/>
+                    
+                    <!-- Right Wrist -->
+                    <rect class="body-part" data-part="right-wrist" x="275" y="400" width="20" height="15" fill="#ffc896" stroke="#333" stroke-width="1.5"/>
+                    
+                    <!-- Left Hand -->
+                    <ellipse class="body-part" data-part="left-hand" cx="115" cy="430" rx="15" ry="20" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Left Fingers -->
+                    <rect class="body-part" data-part="left-thumb" x="95" y="425" width="8" height="20" rx="4" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <rect class="body-part" data-part="left-index" x="108" y="445" width="6" height="22" rx="3" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <rect class="body-part" data-part="left-middle" x="116" y="448" width="6" height="24" rx="3" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <rect class="body-part" data-part="left-ring" x="124" y="446" width="6" height="22" rx="3" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <rect class="body-part" data-part="left-pinky" x="132" y="442" width="5" height="18" rx="3" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    
+                    <!-- Right Hand -->
+                    <ellipse class="body-part" data-part="right-hand" cx="285" cy="430" rx="15" ry="20" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Right Fingers -->
+                    <rect class="body-part" data-part="right-thumb" x="297" y="425" width="8" height="20" rx="4" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <rect class="body-part" data-part="right-index" x="286" y="445" width="6" height="22" rx="3" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <rect class="body-part" data-part="right-middle" x="278" y="448" width="6" height="24" rx="3" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <rect class="body-part" data-part="right-ring" x="270" y="446" width="6" height="22" rx="3" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <rect class="body-part" data-part="right-pinky" x="263" y="442" width="5" height="18" rx="3" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    
+                    <!-- Hips -->
+                    <rect class="body-part" data-part="hips" x="130" y="400" width="140" height="40" fill="#4a90e2" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Left Thigh -->
+                    <rect class="body-part" data-part="left-thigh" x="135" y="440" width="50" height="110" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Right Thigh -->
+                    <rect class="body-part" data-part="right-thigh" x="215" y="440" width="50" height="110" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Left Knee -->
+                    <circle class="body-part" data-part="left-knee" cx="160" cy="555" r="18" fill="#ffc896" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Right Knee -->
+                    <circle class="body-part" data-part="right-knee" cx="240" cy="555" r="18" fill="#ffc896" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Left Shin -->
+                    <rect class="body-part" data-part="left-shin" x="142" y="565" width="36" height="95" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Right Shin -->
+                    <rect class="body-part" data-part="right-shin" x="222" y="565" width="36" height="95" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Left Ankle -->
+                    <rect class="body-part" data-part="left-ankle" x="145" y="660" width="30" height="15" fill="#ffc896" stroke="#333" stroke-width="1.5"/>
+                    
+                    <!-- Right Ankle -->
+                    <rect class="body-part" data-part="right-ankle" x="225" y="660" width="30" height="15" fill="#ffc896" stroke="#333" stroke-width="1.5"/>
+                    
+                    <!-- Left Foot -->
+                    <ellipse class="body-part" data-part="left-foot" cx="155" cy="685" rx="25" ry="12" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Left Toes -->
+                    <circle class="body-part" data-part="left-big-toe" cx="170" cy="692" r="5" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <circle class="body-part" data-part="left-toe2" cx="163" cy="694" r="4" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <circle class="body-part" data-part="left-toe3" cx="156" cy="694" r="4" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <circle class="body-part" data-part="left-toe4" cx="149" cy="693" r="3.5" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <circle class="body-part" data-part="left-toe5" cx="143" cy="691" r="3" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    
+                    <!-- Right Foot -->
+                    <ellipse class="body-part" data-part="right-foot" cx="245" cy="685" rx="25" ry="12" fill="#ffd4a3" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Right Toes -->
+                    <circle class="body-part" data-part="right-big-toe" cx="230" cy="692" r="5" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <circle class="body-part" data-part="right-toe2" cx="237" cy="694" r="4" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <circle class="body-part" data-part="right-toe3" cx="244" cy="694" r="4" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <circle class="body-part" data-part="right-toe4" cx="251" cy="693" r="3.5" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                    <circle class="body-part" data-part="right-toe5" cx="257" cy="691" r="3" fill="#ffd4a3" stroke="#333" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="info-panel">
+                <h2 id="part-name">Welcome!</h2>
+                <p id="part-info" class="default-message">Hover over any body part to learn interesting facts about it.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bodyParts = {
+            'head': {
+                name: 'Head',
+                info: 'The head contains the brain, which controls all body functions. It weighs about 3 pounds and uses 20% of the body\'s total energy despite being only 2% of body weight.'
+            },
+            'hair': {
+                name: 'Hair',
+                info: 'Hair is made of keratin, the same protein found in nails. The average person has about 100,000 hair follicles on their scalp, and loses 50-100 hairs per day naturally.'
+            },
+            'left-ear': {
+                name: 'Left Ear',
+                info: 'The ear contains the smallest bones in the human body (malleus, incus, and stapes). It helps with hearing and balance, and never stops growing throughout your life.'
+            },
+            'right-ear': {
+                name: 'Right Ear',
+                info: 'The ear has three parts: outer, middle, and inner ear. The inner ear contains the cochlea with about 16,000 hair cells that help convert sound waves into electrical signals.'
+            },
+            'left-eye': {
+                name: 'Left Eye',
+                info: 'Eyes can process about 36,000 bits of information per hour. The eye muscles are the most active muscles in the body, moving about 100,000 times a day.'
+            },
+            'right-eye': {
+                name: 'Right Eye',
+                info: 'The human eye can distinguish about 10 million different colors. Your eyes stay the same size from birth, but your nose and ears never stop growing!'
+            },
+            'nose': {
+                name: 'Nose',
+                info: 'The nose can detect over 1 trillion different scents. It filters, warms, and humidifies about 500 cubic feet of air every day. Your sense of smell is 10,000 times more sensitive than your sense of taste.'
+            },
+            'mouth': {
+                name: 'Mouth',
+                info: 'The mouth contains about 10,000 taste buds that are replaced every 2 weeks. Your tongue is the strongest muscle relative to its size and has a unique print, just like fingerprints.'
+            },
+            'neck': {
+                name: 'Neck',
+                info: 'The neck contains 7 cervical vertebrae and supports the weight of your head (10-12 pounds). It allows for a wide range of head movements and houses vital structures like the spinal cord, esophagus, and trachea.'
+            },
+            'chest': {
+                name: 'Chest',
+                info: 'The chest houses vital organs including the heart and lungs. The heart beats about 100,000 times per day, pumping 2,000 gallons of blood. The lungs contain about 300 million alveoli for gas exchange.'
+            },
+            'abdomen': {
+                name: 'Abdomen',
+                info: 'The abdomen contains digestive organs including the stomach, liver, and intestines. The small intestine is about 20 feet long, and the large intestine is about 5 feet long. Your stomach produces a new layer of mucus every two weeks.'
+            },
+            'left-shoulder': {
+                name: 'Left Shoulder',
+                info: 'The shoulder is a ball-and-socket joint with the greatest range of motion of any joint in the body. It\'s formed by the clavicle, scapula, and humerus, and is supported by the rotator cuff muscles.'
+            },
+            'right-shoulder': {
+                name: 'Right Shoulder',
+                info: 'The shoulder joint can move in multiple directions: forward, backward, sideways, and rotate. This mobility comes at the cost of stability, making it one of the most commonly dislocated joints.'
+            },
+            'left-upper-arm': {
+                name: 'Left Upper Arm',
+                info: 'The upper arm contains the humerus bone and major muscles like the biceps and triceps. The biceps helps you flex your arm, while the triceps extends it. Blood vessels and nerves run through this region to the hand.'
+            },
+            'right-upper-arm': {
+                name: 'Right Upper Arm',
+                info: 'The upper arm muscles can generate significant force. The biceps can lift heavy weights through flexion, and the triceps provides powerful extension for pushing movements.'
+            },
+            'left-elbow': {
+                name: 'Left Elbow',
+                info: 'The elbow is a hinge joint connecting the upper arm to the forearm. It allows for flexion and extension, and also helps with forearm rotation. The "funny bone" is actually the ulnar nerve running through the elbow.'
+            },
+            'right-elbow': {
+                name: 'Right Elbow',
+                info: 'The elbow joint includes three bones: humerus, radius, and ulna. It can bend up to 150 degrees and is crucial for bringing food to your mouth and performing daily tasks.'
+            },
+            'left-forearm': {
+                name: 'Left Forearm',
+                info: 'The forearm contains two bones (radius and ulna) and about 20 muscles that control hand and wrist movements. It enables complex hand movements like gripping, twisting, and fine motor control.'
+            },
+            'right-forearm': {
+                name: 'Right Forearm',
+                info: 'Forearm muscles control finger movements through long tendons that extend into the hand. The forearm can rotate almost 180 degrees, allowing the palm to face up or down.'
+            },
+            'left-wrist': {
+                name: 'Left Wrist',
+                info: 'The wrist contains 8 small carpal bones arranged in two rows. It allows for flexion, extension, and side-to-side movement. The carpal tunnel passes through the wrist, containing tendons and the median nerve.'
+            },
+            'right-wrist': {
+                name: 'Right Wrist',
+                info: 'The wrist is one of the most complex joints, allowing the hand to move in multiple planes. It can support significant weight and is essential for most hand functions.'
+            },
+            'left-hand': {
+                name: 'Left Hand',
+                info: 'The hand contains 27 bones, 29 joints, and over 100 muscles and tendons. It has more nerve endings per square inch than almost any other part of the body, providing exceptional sensitivity.'
+            },
+            'right-hand': {
+                name: 'Right Hand',
+                info: 'Your hand can make over 1,000 different positions and movements. The opposable thumb sets humans apart, allowing for precision grip and tool use that define human evolution.'
+            },
+            'left-thumb': {
+                name: 'Left Thumb',
+                info: 'The thumb has only two bones (phalanges) instead of three. It accounts for 40% of hand function. The saddle joint at the thumb base allows for unique circular motion.'
+            },
+            'left-index': {
+                name: 'Left Index Finger',
+                info: 'The index finger is the most dexterous finger and works closely with the thumb for precision tasks. It has its own muscle that extends it independently, allowing for pointing and detailed work.'
+            },
+            'left-middle': {
+                name: 'Left Middle Finger',
+                info: 'The middle finger is the longest finger and provides stability for gripping. It has three bones (phalanges) and helps distribute force when making a fist or gripping objects.'
+            },
+            'left-ring': {
+                name: 'Left Ring Finger',
+                info: 'The ring finger is connected to the middle finger by shared tendons, making it difficult to move independently. It\'s traditionally used for wedding rings because of ancient beliefs about a vein connecting directly to the heart.'
+            },
+            'left-pinky': {
+                name: 'Left Pinky Finger',
+                info: 'Despite being the smallest finger, the pinky contributes 50% of hand strength. It\'s crucial for grip strength and provides stability when holding objects.'
+            },
+            'right-thumb': {
+                name: 'Right Thumb',
+                info: 'The thumb can touch all other fingers, enabling precision and power grip. It has its own dedicated motor cortex area in the brain, reflecting its importance for complex tasks.'
+            },
+            'right-index': {
+                name: 'Right Index Finger',
+                info: 'This finger is controlled by more brain area than any other finger. It\'s essential for pointing, typing, and fine manipulation. Your fingerprint pattern is unique and never changes.'
+            },
+            'right-middle': {
+                name: 'Right Middle Finger',
+                info: 'The middle finger reaches farthest and helps with gripping cylindrical objects. It works with other fingers to create a strong, stable grip for carrying heavy items.'
+            },
+            'right-ring': {
+                name: 'Right Ring Finger',
+                info: 'The ring finger has limited independent movement but is important for overall hand strength. Its connected tendons help distribute force across the hand when gripping.'
+            },
+            'right-pinky': {
+                name: 'Right Pinky Finger',
+                info: 'Losing your pinky would reduce hand strength by 50%. It acts as a stabilizer and helps secure objects against the palm when gripping.'
+            },
+            'hips': {
+                name: 'Hips',
+                info: 'The hips are ball-and-socket joints that support the body\'s weight and enable walking, running, and sitting. The hip joint is one of the most stable joints, surrounded by strong ligaments and muscles.'
+            },
+            'left-thigh': {
+                name: 'Left Thigh',
+                info: 'The thigh contains the femur, the longest and strongest bone in the body. The quadriceps muscle group in the front is one of the strongest muscle groups, essential for walking, running, and standing.'
+            },
+            'right-thigh': {
+                name: 'Right Thigh',
+                info: 'The thigh muscles include the quadriceps (front) and hamstrings (back). These muscles work together to extend and flex the knee, and the femur can support up to 30 times your body weight.'
+            },
+            'left-knee': {
+                name: 'Left Knee',
+                info: 'The knee is the largest joint in the body and can support 1.5 times your body weight when walking and up to 6 times when climbing stairs. It contains the patella (kneecap), which protects the joint and improves muscle efficiency.'
+            },
+            'right-knee': {
+                name: 'Right Knee',
+                info: 'The knee joint includes four ligaments (ACL, PCL, MCL, LCL) that provide stability. Cartilage and menisci cushion the joint, and the kneecap is the largest sesamoid bone in the body.'
+            },
+            'left-shin': {
+                name: 'Left Shin',
+                info: 'The shin contains the tibia (shinbone) and fibula. The tibia is the second largest bone and bears most of the leg\'s weight. Muscles in this area control ankle and foot movements.'
+            },
+            'right-shin': {
+                name: 'Right Shin',
+                info: 'The shin has minimal muscle coverage on the front, making it sensitive to impacts. The muscles here lift the foot up (dorsiflexion) and control the toes during walking.'
+            },
+            'left-ankle': {
+                name: 'Left Ankle',
+                info: 'The ankle is a hinge joint formed by the tibia, fibula, and talus. It supports the entire body weight and allows for up-and-down foot movement. Strong ligaments prevent excessive side-to-side motion.'
+            },
+            'right-ankle': {
+                name: 'Right Ankle',
+                info: 'The ankle can support forces up to 5 times your body weight during running. It has proprioceptive sensors that help maintain balance and adjust to uneven surfaces.'
+            },
+            'left-foot': {
+                name: 'Left Foot',
+                info: 'The foot contains 26 bones, 33 joints, and more than 100 muscles, tendons, and ligaments. It has three arches that act as springs, absorbing shock and distributing body weight during movement.'
+            },
+            'right-foot': {
+                name: 'Right Foot',
+                info: 'Your feet contain about 25% of all the bones in your body. They have over 250,000 sweat glands and can produce up to a cup of sweat per day. The average person walks about 100,000 miles in their lifetime!'
+            },
+            'left-big-toe': {
+                name: 'Left Big Toe',
+                info: 'The big toe (hallux) contains two bones instead of three. It bears about 40% of your body weight during walking and is essential for balance and pushing off when walking or running.'
+            },
+            'left-toe2': {
+                name: 'Left Second Toe',
+                info: 'The second toe is often the longest in many people. It helps with balance and push-off during walking. All toes except the big toe have three bones (phalanges).'
+            },
+            'left-toe3': {
+                name: 'Left Third Toe',
+                info: 'The middle toe helps distribute weight across the foot and provides stability. It works with other toes to maintain balance and adapt to different surfaces.'
+            },
+            'left-toe4': {
+                name: 'Left Fourth Toe',
+                info: 'The fourth toe contributes to foot balance and helps with push-off during gait. While smaller, it plays an important role in overall foot function and stability.'
+            },
+            'left-toe5': {
+                name: 'Left Fifth Toe (Pinky)',
+                info: 'The pinky toe is the smallest toe but helps with balance and lateral stability. It\'s often subject to injury from stubbing. Despite its size, it contributes to proper weight distribution.'
+            },
+            'right-big-toe': {
+                name: 'Right Big Toe',
+                info: 'The big toe has the strongest tendons in the foot. Gout commonly affects this toe due to uric acid crystal buildup. It\'s crucial for maintaining balance while standing on one foot.'
+            },
+            'right-toe2': {
+                name: 'Right Second Toe',
+                info: 'This toe shares ligaments with adjacent toes, providing stability. Morton\'s toe (when the second toe is longer) occurs in about 10-30% of people and is perfectly normal.'
+            },
+            'right-toe3': {
+                name: 'Right Third Toe',
+                info: 'The middle toe helps create the foot\'s natural spring mechanism. It assists in propulsion during walking and running, working together with the foot\'s arch system.'
+            },
+            'right-toe4': {
+                name: 'Right Fourth Toe',
+                info: 'This toe helps maintain lateral balance and contributes to the foot\'s natural flexibility. It adjusts to terrain changes and helps prevent ankle rolling.'
+            },
+            'right-toe5': {
+                name: 'Right Fifth Toe (Pinky)',
+                info: 'The pinky toe helps with lateral balance and is important for athletes in sports requiring quick direction changes. It may seem small, but losing it would affect your gait and balance significantly.'
+            }
+        };
+
+        const bodyPartElements = document.querySelectorAll('.body-part');
+        const partName = document.getElementById('part-name');
+        const partInfo = document.getElementById('part-info');
+
+        bodyPartElements.forEach(element => {
+            element.addEventListener('mouseenter', function() {
+                const partKey = this.getAttribute('data-part');
+                const part = bodyParts[partKey];
+                
+                if (part) {
+                    partName.textContent = part.name;
+                    partInfo.textContent = part.info;
+                    partInfo.classList.remove('default-message');
+                }
+            });
+
+            element.addEventListener('mouseleave', function() {
+                partName.textContent = 'Welcome!';
+                partInfo.textContent = 'Hover over any body part to learn interesting facts about it.';
+                partInfo.classList.add('default-message');
+            });
+        });
+    </script>
+</body>
+</html>
