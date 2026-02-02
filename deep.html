@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 2D Human Anatomy Explorer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a3a, #0d1520);
+            color: #e0f0ff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(100, 150, 255, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0c8ff;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .human-figure-container {
+            flex: 1;
+            min-width: 500px;
+            background: rgba(20, 35, 60, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(80, 130, 255, 0.2);
+        }
+        
+        .info-panel {
+            flex: 1;
+            min-width: 400px;
+            background: rgba(20, 35, 60, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(80, 130, 255, 0.2);
+            overflow-y: auto;
+            max-height: 750px;
+        }
+        
+        .info-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(100, 150, 255, 0.3);
+        }
+        
+        .info-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+            color: #4facfe;
+        }
+        
+        .info-title {
+            font-size: 1.8rem;
+            color: #e0f0ff;
+        }
+        
+        .info-content {
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .info-content h3 {
+            color: #4facfe;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .info-content p {
+            margin-bottom: 15px;
+            color: #c0d8ff;
+        }
+        
+        .info-content ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .info-content li {
+            margin-bottom: 8px;
+            color: #c0d8ff;
+        }
+        
+        .human-figure {
+            position: relative;
+            width: 100%;
+            height: 650px;
+            margin: 0 auto;
+        }
+        
+        /* Body parts styling */
+        .body-part {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.9;
+        }
+        
+        .body-part:hover {
+            opacity: 1;
+            filter: drop-shadow(0 0 8px rgba(79, 172, 254, 0.7));
+        }
+        
+        .body-part.active {
+            filter: drop-shadow(0 0 15px rgba(79, 172, 254, 0.9));
+            opacity: 1;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: linear-gradient(to right, #2b5876, #4e4376);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .control-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .control-btn i {
+            font-size: 1.2rem;
+        }
+        
+        .reset-btn {
+            background: linear-gradient(to right, #2b5876, #4e4376);
+        }
+        
+        .zoom-in {
+            background: linear-gradient(to right, #2b5876, #4e4376);
+        }
+        
+        .zoom-out {
+            background: linear-gradient(to right, #2b5876, #4e4376);
+        }
+        
+        footer {
+            text-align: center;
+            padding-top: 20px;
+            color: #88aaff;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(100, 150, 255, 0.2);
+        }
+        
+        .instructions {
+            margin-top: 15px;
+            font-style: italic;
+            color: #a0c8ff;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1100px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .human-figure-container, .info-panel {
+                min-width: 100%;
+            }
+            
+            .human-figure {
+                height: 550px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .human-figure {
+                height: 400px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .control-btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interactive Human Anatomy Explorer</h1>
+            <p class="subtitle">Click on any body part to explore detailed anatomical information. Zoom in to see finer details like fingers, toes, and ears.</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="human-figure-container">
+                <div class="human-figure" id="humanFigure">
+                    <!-- SVG human figure will be inserted here by JavaScript -->
+                </div>
+                
+                <div class="controls">
+                    <button class="control-btn reset-btn" id="resetView">
+                        <i class="fas fa-sync-alt"></i> Reset View
+                    </button>
+                    <button class="control-btn zoom-in" id="zoomIn">
+                        <i class="fas fa-search-plus"></i> Zoom In
+                    </button>
+                    <button class="control-btn zoom-out" id="zoomOut">
+                        <i class="fas fa-search-minus"></i> Zoom Out
+                    </button>
+                </div>
+            </div>
+            
+            <div class="info-panel">
+                <div class="info-header">
+                    <div class="info-icon">
+                        <i class="fas fa-info-circle" id="infoIcon"></i>
+                    </div>
+                    <h2 class="info-title" id="infoTitle">Human Anatomy Explorer</h2>
+                </div>
+                <div class="info-content" id="infoContent">
+                    <h3>Welcome to the Interactive Human Anatomy Explorer</h3>
+                    <p>This interactive tool allows you to explore detailed human anatomy by clicking on different body parts.</p>
+                    <p><strong>How to use:</strong></p>
+                    <ul>
+                        <li>Click on any body part to select it and view detailed information</li>
+                        <li>Use the zoom buttons to see finer details</li>
+                        <li>Click "Reset View" to return to the default view</li>
+                        <li>Hover over body parts to see them highlighted</li>
+                    </ul>
+                    <p>Select a body part to begin exploring the fascinating details of human anatomy!</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Interactive 2D Human Anatomy Explorer | Created for educational purposes</p>
+            <p class="instructions">Click on body parts like the head, chest, arms, hands, legs, or feet to explore detailed anatomical information</p>
+        </footer>
+    </div>
+
+    <script>
+        // Anatomy data for different body parts
+        const anatomyData = {
+            head: {
+                title: "Head & Brain",
+                icon: "fas fa-brain",
+                content: `
+                    <h3>Head & Brain Anatomy</h3>
+                    <p>The human head contains the brain, sensory organs (eyes, ears, nose, and mouth), and various structures that facilitate essential functions.</p>
+                    
+                    <p><strong>Key Components:</strong></p>
+                    <ul>
+                        <li><strong>Brain:</strong> The control center of the body, divided into cerebrum, cerebellum, and brainstem</li>
+                        <li><strong>Skull:</strong> Protective bony structure that houses the brain</li>
+                        <li><strong>Eyes:</strong> Complex organs for vision, containing retina, lens, and cornea</li>
+                        <li><strong>Ears:</strong> Organs for hearing and balance, with outer, middle, and inner sections</li>
+                        <li><strong>Nose & Sinuses:</strong> Structures for smell and respiration</li>
+                        <li><strong>Mouth:</strong> Contains teeth, tongue, and salivary glands for digestion initiation</li>
+                    </ul>
+                    
+                    <p>The brain weighs approximately 1.4 kg (3 pounds) and contains about 86 billion neurons.</p>
+                `
+            },
+            chest: {
+                title: "Chest & Thoracic Organs",
+                icon: "fas fa-heartbeat",
+                content: `
+                    <h3>Chest & Thoracic Cavity</h3>
+                    <p>The chest (thoracic cavity) contains vital organs for circulation, respiration, and protection.</p>
+                    
+                    <p><strong>Major Organs:</strong></p>
+                    <ul>
+                        <li><strong>Heart:</strong> Muscular organ that pumps blood throughout the body</li>
+                        <li><strong>Lungs:</strong> Pair of spongy organs for gas exchange (oxygen in, carbon dioxide out)</li>
+                        <li><strong>Ribs & Sternum:</strong> Bony cage that protects thoracic organs</li>
+                        <li><strong>Diaphragm:</strong> Major muscle for respiration that separates thoracic and abdominal cavities</li>
+                        <li><strong>Esophagus:</strong> Muscular tube connecting throat to stomach</li>
+                        <li><strong>Trachea:</strong> Windpipe that carries air to the lungs</li>
+                    </ul>
+                    
+                    <p>The heart beats approximately 100,000 times per day, pumping about 7,500 liters of blood.</p>
+                `
+            },
+            abdomen: {
+                title: "Abdomen & Digestive System",
+                icon: "fas fa-stomach",
+                content: `
+                    <h3>Abdomen & Digestive Organs</h3>
+                    <p>The abdominal cavity contains most digestive organs and plays a crucial role in nutrient processing and waste elimination.</p>
+                    
+                    <p><strong>Key Organs:</strong></p>
+                    <ul>
+                        <li><strong>Stomach:</strong> Muscular sac that mixes food with digestive juices</li>
+                        <li><strong>Liver:</strong> Largest internal organ, produces bile and detoxifies chemicals</li>
+                        <li><strong>Pancreas:</strong> Produces digestive enzymes and hormones like insulin</li>
+                        <li><strong>Small Intestine:</strong> Where most digestion and nutrient absorption occurs</li>
+                        <li><strong>Large Intestine:</strong> Absorbs water and forms feces</li>
+                        <li><strong>Kidneys:</strong> Filter blood, remove waste, and regulate fluid balance</li>
+                        <li><strong>Spleen:</strong> Filters blood and supports immune system</li>
+                    </ul>
+                    
+                    <p>The small intestine is approximately 6-7 meters (20-23 feet) long in adults.</p>
+                `
+            },
+            arm: {
+                title: "Arm & Upper Limb",
+                icon: "fas fa-hand-paper",
+                content: `
+                    <h3>Arm & Upper Limb Anatomy</h3>
+                    <p>The human arm is a complex structure designed for mobility, manipulation, and strength.</p>
+                    
+                    <p><strong>Major Components:</strong></p>
+                    <ul>
+                        <li><strong>Shoulder:</strong> Ball-and-socket joint connecting arm to torso</li>
+                        <li><strong>Upper Arm (Humerus):</strong> Single long bone between shoulder and elbow</li>
+                        <li><strong>Forearm:</strong> Contains radius and ulna bones</li>
+                        <li><strong>Elbow Joint:</strong> Hinge joint allowing flexion and extension</li>
+                        <li><strong>Wrist:</strong> Complex joint with 8 carpal bones</li>
+                        <li><strong>Muscles:</strong> Biceps (front), triceps (back), and numerous forearm muscles</li>
+                    </ul>
+                    
+                    <p>The arm contains approximately 30 bones, including the shoulder, arm, forearm, wrist, and hand bones.</p>
+                `
+            },
+            hand: {
+                title: "Hand & Fingers",
+                icon: "fas fa-hand",
+                content: `
+                    <h3>Hand & Finger Anatomy</h3>
+                    <p>The human hand is an intricate structure with remarkable dexterity, containing 27 bones and numerous muscles.</p>
+                    
+                    <p><strong>Detailed Anatomy:</strong></p>
+                    <ul>
+                        <li><strong>Palm:</strong> Contains 5 metacarpal bones</li>
+                        <li><strong>Fingers (Digits):</strong> Each has 3 phalanges (except thumb with 2)</li>
+                        <li><strong>Thumb:</strong> Opposable digit with unique saddle joint</li>
+                        <li><strong>Joints:</strong> Interphalangeal (between finger bones), metacarpophalangeal (knuckles)</li>
+                        <li><strong>Fingerprints:</strong> Unique ridge patterns on fingertips for grip</li>
+                        <li><strong>Nails:</strong> Protective keratin plates on dorsal fingertips</li>
+                    </ul>
+                    
+                    <p>Each hand contains approximately 17,000 touch receptors and nerve endings, making it one of the most sensitive body parts.</p>
+                `
+            },
+            leg: {
+                title: "Leg & Lower Limb",
+                icon: "fas fa-walking",
+                content: `
+                    <h3>Leg & Lower Limb Anatomy</h3>
+                    <p>The legs provide support, mobility, and stability for the human body, containing some of the strongest bones and muscles.</p>
+                    
+                    <p><strong>Major Components:</strong></p>
+                    <ul>
+                        <li><strong>Hip Joint:</strong> Ball-and-socket connecting leg to pelvis</li>
+                        <li><strong>Thigh (Femur):</strong> Longest and strongest bone in the body</li>
+                        <li><strong>Knee:</strong> Complex hinge joint with patella (kneecap)</li>
+                        <li><strong>Lower Leg:</strong> Contains tibia (shin) and fibula bones</li>
+                        <li><strong>Ankle:</strong> Joint connecting leg to foot</li>
+                        <li><strong>Major Muscles:</strong> Quadriceps (front thigh), hamstrings (back thigh), calf muscles</li>
+                    </ul>
+                    
+                    <p>The femur can withstand forces up to 1,800-2,500 pounds, making it remarkably strong for its weight.</p>
+                `
+            },
+            foot: {
+                title: "Foot & Toes",
+                icon: "fas fa-shoe-prints",
+                content: `
+                    <h3>Foot & Toe Anatomy</h3>
+                    <p>The human foot is a complex structure with 26 bones, 33 joints, and over 100 muscles, tendons, and ligaments.</p>
+                    
+                    <p><strong>Detailed Anatomy:</strong></p>
+                    <ul>
+                        <li><strong>Ankle:</strong> Joint between leg and foot with tibia, fibula, and talus</li>
+                        <li><strong>Heel:</strong> Contains calcaneus (largest foot bone)</li>
+                        <li><strong>Arch:</strong> Spring-like structure for shock absorption</li>
+                        <li><strong>Toes (Digits):</strong> Five toes, each with phalanges</li>
+                        <li><strong>Big Toe (Hallux):</strong> Bears most weight during walking</li>
+                        <li><strong>Ball of Foot:</strong> Area behind toes bearing body weight</li>
+                        <li><strong>Plantar Fascia:</strong> Thick band supporting the arch</li>
+                    </ul>
+                    
+                    <p>The average person takes 8,000-10,000 steps per day, which adds up to about 115,000 miles over a lifetime—more than four times around the Earth!</p>
+                `
+            },
+            ear: {
+                title: "Ear & Hearing",
+                icon: "fas fa-ear",
+                content: `
+                    <h3>Ear & Hearing Anatomy</h3>
+                    <p>The human ear is a complex organ responsible for hearing and balance, divided into three main sections.</p>
+                    
+                    <p><strong>Detailed Anatomy:</strong></p>
+                    <ul>
+                        <li><strong>Outer Ear:</strong> Pinna (visible part) and ear canal</li>
+                        <li><strong>Middle Ear:</strong> Contains eardrum and three tiny bones (ossicles) - malleus, incus, and stapes</li>
+                        <li><strong>Inner Ear:</strong> Cochlea (hearing) and vestibular system (balance)</li>
+                        <li><strong>Eardrum:</strong> Thin membrane that vibrates with sound</li>
+                        <li><strong>Eustachian Tube:</strong> Connects middle ear to throat, equalizes pressure</li>
+                        <li><strong>Cochlea:</strong> Spiral-shaped organ with hair cells that convert sound vibrations to nerve signals</li>
+                    </ul>
+                    
+                    <p>The human ear can detect sounds from 20 Hz (low pitch) to 20,000 Hz (high pitch) and can distinguish between hundreds of thousands of different sounds.</p>
+                `
+            }
+        };
+
+        // Current state
+        let currentZoom = 1;
+        let activePart = null;
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create SVG human figure
+            createHumanFigure();
+            
+            // Set up event listeners for controls
+            document.getElementById('resetView').addEventListener('click', resetView);
+            document.getElementById('zoomIn').addEventListener('click', zoomIn);
+            document.getElementById('zoomOut').addEventListener('click', zoomOut);
+            
+            // Set up initial info display
+            updateInfoPanel('head');
+        });
+        
+        // Create SVG human figure with detailed body parts
+        function createHumanFigure() {
+            const container = document.getElementById('humanFigure');
+            
+            // Create SVG element
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("viewBox", "0 0 800 800");
+            svg.setAttribute("width", "100%");
+            svg.setAttribute("height", "100%");
+            svg.setAttribute("id", "humanFigureSVG");
+            
+            // Create groups for different zoom levels
+            const mainGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            mainGroup.setAttribute("id", "mainGroup");
+            mainGroup.setAttribute("transform", `scale(${currentZoom}) translate(400, 400)`);
+            
+            // Draw detailed human figure with body parts
+            // Head (with detailed features)
+            const headGroup = createBodyPart('head', 0, -180, 70, 90, '#4facfe');
+            // Add facial features to head
+            const faceGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            
+            // Eyes
+            const leftEye = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+            leftEye.setAttribute("cx", "-20");
+            leftEye.setAttribute("cy", "-20");
+            leftEye.setAttribute("rx", "8");
+            leftEye.setAttribute("ry", "12");
+            leftEye.setAttribute("fill", "#1a1a2e");
+            
+            const rightEye = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+            rightEye.setAttribute("cx", "20");
+            rightEye.setAttribute("cy", "-20");
+            rightEye.setAttribute("rx", "8");
+            rightEye.setAttribute("ry", "12");
+            rightEye.setAttribute("fill", "#1a1a2e");
+            
+            // Nose
+            const nose = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            nose.setAttribute("d", "M-5,-10 L0,0 L5,-10");
+            nose.setAttribute("fill", "none");
+            nose.setAttribute("stroke", "#1a1a2e");
+            nose.setAttribute("stroke-width", "2");
+            
+            // Mouth
+            const mouth = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            mouth.setAttribute("d", "M-15,15 Q0,25 15,15");
+            mouth.setAttribute("fill", "none");
+            mouth.setAttribute("stroke", "#1a1a2e");
+            mouth.setAttribute("stroke-width", "2");
+            
+            // Ears
+            const leftEar = createBodyPart('ear', -75, -20, 15, 25, '#4facfe');
+            const rightEar = createBodyPart('ear', 75, -20, 15, 25, '#4facfe');
+            
+            faceGroup.appendChild(leftEye);
+            faceGroup.appendChild(rightEye);
+            faceGroup.appendChild(nose);
+            faceGroup.appendChild(mouth);
+            headGroup.appendChild(faceGroup);
+            headGroup.appendChild(leftEar);
+            headGroup.appendChild(rightEar);
+            
+            // Neck
+            const neck = createBodyPart('neck', 0, -90, 25, 40, '#4facfe');
+            
+            // Chest/Torso
+            const chest = createBodyPart('chest', 0, 0, 120, 180, '#4facfe');
+            
+            // Abdomen
+            const abdomen = createBodyPart('abdomen', 0, 180, 100, 120, '#4facfe');
+            
+            // Left Arm (with detailed hand)
+            const leftArmGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            leftArmGroup.setAttribute("id", "leftArmGroup");
+            
+            // Upper arm
+            const leftUpperArm = createBodyPart('arm', -150, 30, 40, 100, '#4facfe');
+            
+            // Forearm
+            const leftForearm = createBodyPart('arm', -150, 140, 35, 100, '#4facfe');
+            
+            // Hand with fingers
+            const leftHandGroup = createHand('hand', -150, 250, 40, 30, '#4facfe', 'left');
+            
+            leftArmGroup.appendChild(leftUpperArm);
+            leftArmGroup.appendChild(leftForearm);
+            leftArmGroup.appendChild(leftHandGroup);
+            
+            // Right Arm (with detailed hand)
+            const rightArmGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            rightArmGroup.setAttribute("id", "rightArmGroup");
+            
+            // Upper arm
+            const rightUpperArm = createBodyPart('arm', 150, 30, 40, 100, '#4facfe');
+            
+            // Forearm
+            const rightForearm = createBodyPart('arm', 150, 140, 35, 100, '#4facfe');
+            
+            // Hand with fingers
+            const rightHandGroup = createHand('hand', 150, 250, 40, 30, '#4facfe', 'right');
+            
+            rightArmGroup.appendChild(rightUpperArm);
+            rightArmGroup.appendChild(rightForearm);
+            rightArmGroup.appendChild(rightHandGroup);
+            
+            // Left Leg (with detailed foot)
+            const leftLegGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            leftLegGroup.setAttribute("id", "leftLegGroup");
+            
+            // Thigh
+            const leftThigh = createBodyPart('leg', -60, 300, 50, 120, '#4facfe');
+            
+            // Lower leg
+            const leftLowerLeg = createBodyPart('leg', -60, 430, 45, 120, '#4facfe');
+            
+            // Foot with toes
+            const leftFootGroup = createFoot('foot', -60, 560, 60, 30, '#4facfe', 'left');
+            
+            leftLegGroup.appendChild(leftThigh);
+            leftLegGroup.appendChild(leftLowerLeg);
+            leftLegGroup.appendChild(leftFootGroup);
+            
+            // Right Leg (with detailed foot)
+            const rightLegGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            rightLegGroup.setAttribute("id", "rightLegGroup");
+            
+            // Thigh
+            const rightThigh = createBodyPart('leg', 60, 300, 50, 120, '#4facfe');
+            
+            // Lower leg
+            const rightLowerLeg = createBodyPart('leg', 60, 430, 45, 120, '#4facfe');
+            
+            // Foot with toes
+            const rightFootGroup = createFoot('foot', 60, 560, 60, 30, '#4facfe', 'right');
+            
+            rightLegGroup.appendChild(rightThigh);
+            rightLegGroup.appendChild(rightLowerLeg);
+            rightLegGroup.appendChild(rightFootGroup);
+            
+            // Add all body parts to the main group
+            mainGroup.appendChild(headGroup);
+            mainGroup.appendChild(neck);
+            mainGroup.appendChild(chest);
+            mainGroup.appendChild(abdomen);
+            mainGroup.appendChild(leftArmGroup);
+            mainGroup.appendChild(rightArmGroup);
+            mainGroup.appendChild(leftLegGroup);
+            mainGroup.appendChild(rightLegGroup);
+            
+            svg.appendChild(mainGroup);
+            container.appendChild(svg);
+        }
+        
+        // Create a body part element
+        function createBodyPart(id, x, y, width, height, color) {
+            const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            group.setAttribute("id", id);
+            group.setAttribute("class", "body-part");
+            group.setAttribute("transform", `translate(${x}, ${y})`);
+            
+            const part = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+            part.setAttribute("cx", "0");
+            part.setAttribute("cy", "0");
+            part.setAttribute("rx", width);
+            part.setAttribute("ry", height);
+            part.setAttribute("fill", color);
+            part.setAttribute("stroke", "#1a2a3a");
+            part.setAttribute("stroke-width", "3");
+            
+            group.appendChild(part);
+            
+            // Add event listener
+            group.addEventListener('click', function(e) {
+                e.stopPropagation();
+                selectBodyPart(id);
+            });
+            
+            return group;
+        }
+        
+        // Create a detailed hand with fingers
+        function createHand(id, x, y, width, height, color, side) {
+            const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            group.setAttribute("id", id);
+            group.setAttribute("class", "body-part");
+            group.setAttribute("transform", `translate(${x}, ${y})`);
+            
+            // Palm
+            const palm = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+            palm.setAttribute("cx", "0");
+            palm.setAttribute("cy", "0");
+            palm.setAttribute("rx", width);
+            palm.setAttribute("ry", height);
+            palm.setAttribute("fill", color);
+            palm.setAttribute("stroke", "#1a2a3a");
+            palm.setAttribute("stroke-width", "3");
+            
+            group.appendChild(palm);
+            
+            // Create fingers (5 fingers)
+            const fingerCount = 5;
+            const fingerWidth = width / 4;
+            const fingerHeight = height * 1.5;
+            
+            for (let i = 0; i < fingerCount; i++) {
+                // Position fingers based on side (left or right hand)
+                let fingerX;
+                if (side === 'left') {
+                    fingerX = -width + (i * fingerWidth * 1.5);
+                } else {
+                    fingerX = width - (i * fingerWidth * 1.5);
+                }
+                
+                const finger = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+                finger.setAttribute("cx", fingerX);
+                finger.setAttribute("cy", -fingerHeight);
+                finger.setAttribute("rx", fingerWidth);
+                finger.setAttribute("ry", fingerHeight);
+                finger.setAttribute("fill", color);
+                finger.setAttribute("stroke", "#1a2a3a");
+                finger.setAttribute("stroke-width", "2");
+                
+                group.appendChild(finger);
+            }
+            
+            // Add event listener
+            group.addEventListener('click', function(e) {
+                e.stopPropagation();
+                selectBodyPart('hand');
+            });
+            
+            return group;
+        }
+        
+        // Create a detailed foot with toes
+        function createFoot(id, x, y, width, height, color, side) {
+            const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            group.setAttribute("id", id);
+            group.setAttribute("class", "body-part");
+            group.setAttribute("transform", `translate(${x}, ${y})`);
+            
+            // Foot base
+            const foot = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+            foot.setAttribute("cx", "0");
+            foot.setAttribute("cy", "0");
+            foot.setAttribute("rx", width);
+            foot.setAttribute("ry", height);
+            foot.setAttribute("fill", color);
+            foot.setAttribute("stroke", "#1a2a3a");
+            foot.setAttribute("stroke-width", "3");
+            
+            group.appendChild(foot);
+            
+            // Create toes (5 toes)
+            const toeCount = 5;
+            const toeWidth = width / 5;
+            const toeHeight = height * 0.8;
+            
+            for (let i = 0; i < toeCount; i++) {
+                // Position toes based on side (left or right foot)
+                let toeX;
+                if (side === 'left') {
+                    toeX = -width + (i * toeWidth * 1.8) + toeWidth;
+                } else {
+                    toeX = width - (i * toeWidth * 1.8) - toeWidth;
+                }
+                
+                const toe = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+                toe.setAttribute("cx", toeX);
+                toe.setAttribute("cy", -toeHeight);
+                toe.setAttribute("rx", toeWidth);
+                toe.setAttribute("ry", toeHeight);
+                toe.setAttribute("fill", color);
+                toe.setAttribute("stroke", "#1a2a3a");
+                toe.setAttribute("stroke-width", "2");
+                
+                group.appendChild(toe);
+            }
+            
+            // Add event listener
+            group.addEventListener('click', function(e) {
+                e.stopPropagation();
+                selectBodyPart('foot');
+            });
+            
+            return group;
+        }
+        
+        // Select a body part and update the info panel
+        function selectBodyPart(partId) {
+            // Remove active class from all body parts
+            document.querySelectorAll('.body-part').forEach(part => {
+                part.classList.remove('active');
+            });
+            
+            // Add active class to selected part
+            const selectedPart = document.getElementById(partId);
+            if (selectedPart) {
+                selectedPart.classList.add('active');
+            }
+            
+            // Also activate related parts
+            if (partId === 'ear') {
+                // Both ears are separate elements with class 'ear'
+                document.querySelectorAll('.body-part[id="ear"]').forEach(ear => {
+                    ear.classList.add('active');
+                });
+            }
+            
+            // Update active part
+            activePart = partId;
+            
+            // Update info panel
+            updateInfoPanel(partId);
+        }
+        
+        // Update the information panel with data for the selected body part
+        function updateInfoPanel(partId) {
+            const partData = anatomyData[partId] || anatomyData.head;
+            
+            // Update title and icon
+            document.getElementById('infoTitle').textContent = partData.title;
+            document.getElementById('infoIcon').className = partData.icon;
+            
+            // Update content
+            document.getElementById('infoContent').innerHTML = partData.content;
+        }
+        
+        // Zoom functions
+        function zoomIn() {
+            if (currentZoom < 2) {
+                currentZoom += 0.2;
+                updateZoom();
+            }
+        }
+        
+        function zoomOut() {
+            if (currentZoom > 0.5) {
+                currentZoom -= 0.2;
+                updateZoom();
+            }
+        }
+        
+        function resetView() {
+            currentZoom = 1;
+            updateZoom();
+            
+            // Reset active part
+            if (activePart) {
+                document.getElementById(activePart).classList.remove('active');
+                activePart = null;
+            }
+            
+            // Reset info panel
+            document.getElementById('infoTitle').textContent = 'Human Anatomy Explorer';
+            document.getElementById('infoIcon').className = 'fas fa-info-circle';
+            document.getElementById('infoContent').innerHTML = `
+                <h3>Welcome to the Interactive Human Anatomy Explorer</h3>
+                <p>This interactive tool allows you to explore detailed human anatomy by clicking on different body parts.</p>
+                <p><strong>How to use:</strong></p>
+                <ul>
+                    <li>Click on any body part to select it and view detailed information</li>
+                    <li>Use the zoom buttons to see finer details</li>
+                    <li>Click "Reset View" to return to the default view</li>
+                    <li>Hover over body parts to see them highlighted</li>
+                </ul>
+                <p>Select a body part to begin exploring the fascinating details of human anatomy!</p>
+            `;
+        }
+        
+        function updateZoom() {
+            const mainGroup = document.getElementById('mainGroup');
+            if (mainGroup) {
+                mainGroup.setAttribute("transform", `scale(${currentZoom}) translate(400, 400)`);
+            }
+        }
+    </script>
+</body>
+</html>
